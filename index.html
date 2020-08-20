@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10 shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="theme-color" content="#09407f">
+	<style type="text/css">
+	*{
+	margin:0;
+	padding:0;
+	}
+	
+	.page-wrap{overflow:hidden;}
+	#select-image-label {
+		margin:10px auto;
+		display: block;
+	}
+	#select-image-label img{
+	border-radius:5px;width:200px;
+	}
+	#selectImage {display:none;}
+	img {max-width: 100%;}
+	.headText{padding:10px;}
+	
+	.image-section{
+	max-width:600px;
+	padding:auto 10px !important;
+	display:flex;
+	justify-content: space-around;
+	verflow-x:auto;
+	flex-wrap:wrap;
+	}
+	.image-section > div{
+	width:48%;
+	}
+	.image-section-wrap{
+	width:100vw;
+	background:rgba(0,0,0,0.04);
+	display:none;
+	}
+	.image-section div > *{
+	width:100% !important;
+	}
+	.text p{
+	font-size:16px !important;
+	padding:5px 0;}
+	#download-link{
+	text-decoration:none;
+	display:inline-block;
+	margin:10px auto;
+	padding:10px 30px;
+	background:#007bff;
+	color:#fff;
+	}
+	</style>
+</head>
+<body>
+<div class="page-wrap" >
+<br><br>
+<center><h1>Compress Image</h1>
+<br>
+	<label id="select-image-label" >
+		<input type="file" id="selectImage" accept="image/*" > 
+	<img src="teal-cloud-upload-icon.jpg" title="Upload image" id="select-image-label-icon"> 
+	</label>	
+<div class="image-section-wrap" >
+	<div class="image-section" >
+		<div>
+			<div>
+				<p class="headText" >Uploaded Image</p>
+				<img src="" title="Upload image" id="uploadedImage"> 
+				<div id="file-info" class="text" ></div>
+			</div>
+		</div>
+		<div>
+			<div>
+				<p class="headText" >Compressed Image</p>
+				<canvas id="outputCanv">Canvas not supported</canvas>
+				<div id="msgBox" class="text" ></div>
+			</div>
+		</div>
+	</div>
+</div>
+	<br><br>
+	<p>1. Simple upload and compress image.</p>
+	<p>2. Useful for online form fill up image.</p>
+	<h4>Currently no customization available.<br>
+	In future we add useful colonization.</h4>
+	</center>
+	<script type="text/javascript">
+	"use strict";
+	window.addEventListener('load', function() {
+		//	 IMAGE LOAD SECTION ================================
+		var selectImage = document.querySelector("#selectImage");
+		var uploadedImage = document.getElementById("uploadedImage");
+		var resizeBtn = document.querySelector("#resizeBtn");
+		var outputCanv = document.querySelector("#outputCanv");
+		var msgBox = document.querySelector("#msgBox");
+		var fileInfo = document.querySelector("#file-info");
+		var originalImageWidth, originalImageHeight;
+		var newImageWidth,newImageHeight,newImgUrl;
+		var isFileLoaded = false;
+		var file = null;
+		var mimeType;
+		var roundFig =(x,d=1)=>{let dc = Math.pow(10,d);return Math.round(x*dc)/dc;}
+		
+		
+		selectImage.addEventListener("change", (event) => {
+			document.querySelector(".image-section-wrap").style.display = "block";
+			outputCanv.width=0;
+			URL.revokeObjectURL(newImgUrl);
+			console.time('FileOpen');
+			var files = event.target.files;
+			if(files && files.length > 0) {
+				isFileLoaded = true;
+				//resizeBtn.style.display = "block";
+				file = files[0];
+				console.log(file)
+					// file reader for data url section
+				var fileReaderForDataURL = new FileReader();
+				fileReaderForDataURL.onloadend = function(e) {
+					uploadedImage.src = e.target.result;
+					// open all section on image onload
+					// find image dimensions 
+					var orgImgForDimenstion = new Image();
+					orgImgForDimenstion.src = e.target.result;
+					orgImgForDimenstion.onload = function() {
+						originalImageHeight = this.naturalHeight || this.height;
+						originalImageWidth = this.naturalWidth || this.width;
+						
+						fileInfo.innerHTML = "<p>Original Size : " + rSize(file.size)+"<br> Original Dimension : "+originalImageWidth+"×"+originalImageHeight+"</p>";
+						//fileInfo.innerHTML = "<p>File Name : "+file.name+"<br>File Size : " + rSize(file.size)+"<br> File Dimension : "+originalImageWidth+"×"+originalImageHeight+"</p>";
+						loadCanvas();
+						console.log("width :" + originalImageWidth + ", height : " + originalImageHeight)
+							//	console.log("ratio : " + imageRatio(originalImageWidth, originalImageHeight));
+						console.log("file name : ", file.name)
+						console.log("last modified date : ", file.lastModifiedDate)
+						console.log("file size : ", file.size, rSize(file.size))
+					};
+					// console image url data
+					console.log(e.target.result)
+				};
+				fileReaderForDataURL.readAsDataURL(file);
+			}
+		})
+		 var loadCanvas = () => {
+			if(isFileLoaded) {
+				var ctx = outputCanv.getContext("2d");
+				newImageWidth = 200;
+				newImageHeight = roundFig(newImageWidth * originalImageHeight / originalImageWidth, 2);
+				outputCanv.width = newImageWidth;
+				outputCanv.height = newImageHeight;
+				
+				ctx.drawImage(uploadedImage, 0, 0, newImageWidth, newImageHeight);
+				
+				outputCanv.toBlob(function(blob){
+				let newImgSize = rSize(blob.size);
+				let percent = roundFig((100 - (blob.size*100/file.size)),2);
+				newImgUrl = URL.createObjectURL(blob);
+				
+				msgBox.innerHTML = '<p>Reduced size : '+percent+'%<br>New Size :'+newImgSize+ '<br>Dimension : '+newImageWidth+"×"+newImageHeight+'<br><a id="download-link" href="'+newImgUrl+'" download>Download</a><A4Canvas</p>';
+				
+				},"image/jpeg");
+				
+			} else {
+				alert("file not uploaded")
+			}
+		}
+
+		function rSize(size, r = false) {
+			let divideBy;
+			if(r) {
+				divideBy = 1024;
+			} else {
+				divideBy = 1000;
+			}
+			let steps = 0;
+			let tempDivideBy = divideBy;
+			let result = "";
+			let uName = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
+			while(size > tempDivideBy) {
+				tempDivideBy *= divideBy;
+				steps++;
+			}
+			return (roundFig(size / Math.pow(divideBy, steps),2)).toFixed(2) + " " + uName[steps];
+		}
+	})
+	</script>
+</body>
+
+</html>
