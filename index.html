@@ -102,8 +102,8 @@
 		margin: 5px;
 	}
 	
-	#resize-btn {
-		padding: 10px 15px;
+	.image-size-wrap button{
+		padding: 5px 15px;
 	}
 	</style>
 </head>
@@ -116,8 +116,11 @@
 			<h1 style=" color:teal;">Compress Image</h1>
 			<br>
 			<label id="select-image-label">
-				<input type="file" id="selectImage" accept="image/*"> <img src="teal-cloud-upload-icon.jpg" title="Upload image" id="select-image-label-icon"> </label>
+				<input type="file" id="selectImage" accept="image/*"> 
+				<img src="upload-icon-n-text.jpg" title="Upload image" id="select-image-label-icon"> </label>
 			<div class="image-size-wrap">
+				<button id="set-org-size">Set Original Size</button>
+				<br><br>
 				<div>
 					<label> Width
 						<br>
@@ -133,7 +136,8 @@
 				<div class="image-section">
 					<div>
 						<div>
-							<p class="headText">Uploaded Image</p> <img src="" title="Upload image" id="uploadedImage">
+							<p class="headText">Uploaded Image</p> 
+							<img src="" title="Upload image" id="uploadedImage">
 							<div id="file-info" class="text"></div>
 						</div>
 					</div>
@@ -198,6 +202,10 @@
 			inputWidth.value = roundFig(e.target.value * originalImageRatio, 2);
 			//		inputWidth.value = (e.target.value * originalImageWidth )/originalImageHeight;
 			resizeBtn.style.display = "block";
+		})
+		document.querySelector("#set-org-size").addEventListener("click",()=>{
+			inputWidth.value = originalImageWidth;
+			inputHeight.value = originalImageHeight
 		})
 		resizeBtn.addEventListener("click", (e) => {
 			e.target.style.display = "none";
