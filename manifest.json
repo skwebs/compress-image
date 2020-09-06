@@ -1,0 +1,38 @@
+{
+  "short_name": "Compress"
+  "name": "Compress Image",
+  "description": "Simply upload and compress image.",
+  "icons": [
+  {
+  "src": "./img/icon-512x512.jpg",
+  "sizes": "512x512",
+  "type": "image/jpg"
+  },
+  {
+   "src": "./img/icon-192x192.jpg",
+   "sizes": "192x192",
+   "type": "image/jpg"
+  }
+ ],
+  "start_url": "./",
+  "background_color": "#fff",
+  "display": "standalone",
+  //"scope": "/",
+  "theme_color": "#3367D6",
+  "shortcuts": [
+    {
+      "name": "Compress Image",
+      "short_name": "Comprees",
+      "description": "Compress image and reduce size.",
+      "url": "./",
+      "icons": [{ "src": "./img/icon-192x192.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Resize Image",
+      "short_name": "Resize",
+      "description": "Resize",
+      "url": "./index.html",
+      "icons": [{ "src": "./img/icon-192x192.jpg", "sizes": "192x192" }]
+    }
+  ]
+}

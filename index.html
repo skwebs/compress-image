@@ -6,9 +6,25 @@
 	<meta name="description" content="Simple upload image, compress and download image.">
 	<meta name="keywords" content="Compress Image, Resize image" />
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10 shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta name="theme-color" content="#09407f">
+	
+	<!-- Required favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="./img/icon-192x192.jpg">
+	<link rel="icon" type="image/png" sizes="192x192" href="./img/icon-192x192.jpg">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon/favicon.ico">
+	<link rel="manifest" href="./manifest.json">
+	<meta name="msapplication-TileColor" content="#0275d8">
+	<meta name="msapplication-TileImage" content="./img/icon-192x192.jpg">
+	<meta name="twitter:card" content="Image Resizer & Compressor" >
+	<meta name="twitter:site" content="@AnshuMemorial" >
+	<meta name="HandheldFriendly" content="True"/>
+	<meta name="MSThemeCompatible" content="no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="translucent black"/>
+	<meta name="msapplication-navbutton-color" content="translucent black"/>
+	<meta name="mssmarttagspreventparsing" content="true"/>
 	<style type="text/css">
 	* {
 		margin: 0;
@@ -117,7 +133,7 @@
 			<br>
 			<label id="select-image-label">
 				<input type="file" id="selectImage" accept="image/*"> 
-				<img src="upload-icon-n-text.jpg" title="Upload image" id="select-image-label-icon"> </label>
+				<img src="./img/upload-icon-n-text.jpg" title="Upload image" id="select-image-label-icon"> </label>
 			<div class="image-size-wrap">
 				<button id="set-org-size">Set Original Size</button>
 				<br><br>
@@ -137,7 +153,7 @@
 					<div>
 						<div>
 							<p class="headText">Uploaded Image</p> 
-							<img src="" title="Upload image" id="uploadedImage">
+							<img title="Upload image" id="uploadedImage">
 							<div id="file-info" class="text"></div>
 						</div>
 					</div>
@@ -148,9 +164,11 @@
 							<div id="msgBox" class="text"></div>
 						</div>
 					</div>
+					
 				</div>
 			</div>
 			<br>
+			<div id="i" ></div>
 			<br>
 			<footer>
 				<h2>Feature</h2>
@@ -171,10 +189,12 @@
 	<br>
 	<br>
 	<br>
+	<script src="./pwa.js"></script>
 	<script type="text/javascript">
 	"use strict";
 	window.addEventListener('load', function() {
 		//	 IMAGE LOAD SECTION ================================
+		var body = document.getElementsByTagName("BODY")[0];
 		var selectImage = document.querySelector("#selectImage");
 		var uploadedImage = document.getElementById("uploadedImage");
 		var resizeBtn = document.querySelector("#resizeBtn");
@@ -186,7 +206,7 @@
 		var newImageWidth, newImageHeight, newImgUrl;
 		var isFileLoaded = false;
 		var file = null;
-		var mimeType;
+		var mimeType = "image/jpeg";
 		var roundFig = (x, d = 0) => {
 			let dc = Math.pow(10, d);
 			return Math.round(x * dc) / dc;
@@ -213,7 +233,8 @@
 			loadCanvas()
 		})
 		selectImage.addEventListener("change", (event) => {
-			document.querySelector(".image-section-wrap").style.display = "block";
+			body.style.opacity = 0.35;
+			//document.querySelector(".image-section-wrap").style.display = "block";
 			outputCanv.width = 0;
 			URL.revokeObjectURL(newImgUrl);
 			console.time('FileOpen');
@@ -223,7 +244,9 @@
 				//resizeBtn.style.display = "block";
 				file = files[0];
 				console.log(file)
-					// file reader for data url section
+				console.log(file.type);
+				mimeType = file.type;
+				// file reader for data url section
 				var fileReaderForDataURL = new FileReader();
 				fileReaderForDataURL.onloadend = function(e) {
 					uploadedImage.src = e.target.result;
@@ -254,6 +277,8 @@
 		})
 
 		function loadCanvas() {
+			body.style.opacity = 0.35;
+			document.querySelector(".image-section-wrap").style.display = "block";
 			console.log("run loadCanvas()");
 			if(isFileLoaded) {
 				var ctx = outputCanv.getContext("2d");
@@ -265,9 +290,16 @@
 				outputCanv.toBlob(function(blob) {
 					let newImgSize = rSize(blob.size);
 					let percent = roundFig((100 - (blob.size * 100 / file.size)), 2);
-					newImgUrl = URL.createObjectURL(blob);
+					let outputImage = new Image();
+					outputImage.addEventListener("load",()=>{
+						body.style.opacity = 1;
+						//alert("image load.");
+					})
+					//newImgUrl
+					 outputImage.src = URL.createObjectURL(blob);
+					// document.querySelector("#i").appendChild(outputImage);
 					msgBox.innerHTML = '<p>Reduced size : ' + percent + '%<br>New Size :' + newImgSize + '<br>Dimension : ' + newImageWidth + "×" + newImageHeight + '<br><a id="download-link" href="' + newImgUrl + '" download>Download</a><A4Canvas</p>';
-				}, "image/jpeg");
+				}, mimeType);
 			} else {
 				alert("file not uploaded")
 			}
