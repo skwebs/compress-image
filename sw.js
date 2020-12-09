@@ -1,9 +1,9 @@
 // use a cacheName for cache versioning
-var cacheName = 'v1:static';
+var cacheName = 'v1';
 
 // during the install phase you usually want to cache static assets
 self.addEventListener('install', function(e) { 
-    alert("install")
+    console.log("install");
     // once the SW is installed, go ahead and fetch the resources to make this work offline
     e.waitUntil(
         caches.open(cacheName).then(function(cache) {
@@ -11,8 +11,7 @@ self.addEventListener('install', function(e) {
                 './',
                 './img/icon-192x192.jpg',
                 './img/icon-512x512.jpg',
-                './pwa.js',
-                '/offline.html'
+                './pwa.js'
             ]).then(function() {
                 self.skipWaiting();
             });
@@ -22,7 +21,7 @@ self.addEventListener('install', function(e) {
 
 // when the browser fetches a url
 self.addEventListener('fetch', function(event) {
-    alert("fetch")
+    console.log("fetch");
     // either respond with the cached object or go ahead and fetch the actual url
     event.respondWith(
         caches.match(event.request).then(function(response) {
